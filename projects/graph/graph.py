@@ -115,7 +115,7 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
-         # Create an empty stack
+        # Create an empty stack
         s = Stack()
         # Create an empty set of visited vertices
         visited = set()
