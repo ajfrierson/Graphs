@@ -1,8 +1,13 @@
-
+import random
+import queue 
 
 class User:
     def __init__(self, name):
         self.name = name
+
+    def __repr__(self):
+        return self.name
+
 
 class SocialGraph:
     def __init__(self):
@@ -34,33 +39,67 @@ class SocialGraph:
         """
         Takes a number of users and an average number of friendships
         as arguments
-
         Creates that number of users and a randomly distributed friendships
         between those users.
-
         The number of users must be greater than the average number of friendships.
         """
         # Reset graph
         self.lastID = 0
         self.users = {}
         self.friendships = {}
+        # user.name = f"User {id}" giving a user a name
         # !!!! IMPLEMENT ME
 
         # Add users
+        for i in range(numUsers):
+            self.addUser(f"User {i+1}")
 
+        # create friendships
+        possibleFriendships = []
+        for userID in self.users:
+            for friendID in range(userID + 1, self.lastID + 1):
+                possibleFriendships.append((userID, friendID))
+        random.shuffle(possibleFriendships)
+        print("possible Friendships: ", possibleFriendships[:10])
+        print("possible Friendships length: ", len(possibleFriendships))
+        for friendship in possibleFriendships[: (numUsers * avgFriendships)// 2]:
+            self.addFriendship(friendship[0], friendship[1])
         # Create friendships
+        # total == avg
 
     def getAllSocialPaths(self, userID):
         """
         Takes a user's userID as an argument
-
         Returns a dictionary containing every user in that user's
         extended network with the shortest friendship path between them.
-
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+        
+        # Create an empty queue
+        q = queue.SimpleQueue()
+        # Put UserID in our Queue as a list item
+        q.put([userID])
+        
+        # while queue is not empty...
+        while q.qsize() > 0:
+            #Dequeue first path from queue
+            path = q.get()
+            # get the current node from the last element in the path
+            v = path[-1]
+            # if that node is not in the visited dict
+            if v not in visited:
+                # mark it as visited
+                visited[v] = path
+                
+                # Then, iterate through all friendships in the set
+                for friendship in self.friendships[v]:
+                   #if a friendship is not in the visited dict
+                   if friendship not in visited:
+                       # add the path (As a list) plus the friendship to the queue
+                       q.put(list(path) + [friendship])
+                    
         return visited
 
 
